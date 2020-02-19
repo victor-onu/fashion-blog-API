@@ -1,5 +1,6 @@
 package com.victor.fashionblog.service;
 
+import com.victor.fashionblog.exception.CustomException;
 import com.victor.fashionblog.exception.ResourceNotFoundException;
 import com.victor.fashionblog.model.Comment;
 import com.victor.fashionblog.repository.CommentRepository;
@@ -7,6 +8,7 @@ import com.victor.fashionblog.repository.PostRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
@@ -29,20 +31,20 @@ public class CommentServiceImpl implements CommentService {
         return postRepository.findById(postId).map(post -> {
             comment.setPost(post);
             return commentRepository.save(comment);
-        }).orElseThrow(() -> new ResourceNotFoundException("PostId " + postId + " not found"));
+        }).orElseThrow(() -> new CustomException("PostId " + postId + " not found", HttpStatus.NOT_FOUND));
     }
 
     @Override
     public Comment updateComment(Long postId, Long commentId, Comment commentRequest) {
 
         if(!postRepository.existsById(postId)) {
-            throw new ResourceNotFoundException("PostId " + postId + " not found");
+            throw new CustomException("PostId " + postId + " not found", HttpStatus.NOT_FOUND);
         }
 
         return commentRepository.findById(commentId).map(comment -> {
             comment.setText(commentRequest.getText());
             return commentRepository.save(comment);
-        }).orElseThrow(() -> new ResourceNotFoundException("CommentId " + commentId + "not found"));
+        }).orElseThrow(() -> new CustomException("CommentId " + commentId + "not found", HttpStatus.NOT_FOUND));
     }
 
     @Override
@@ -50,7 +52,7 @@ public class CommentServiceImpl implements CommentService {
         return commentRepository.findByIdAndPostId(commentId, postId).map(comment -> {
             commentRepository.delete(comment);
             return ResponseEntity.ok().build();
-        }).orElseThrow(() -> new ResourceNotFoundException("Comment not found with id " + commentId + " and postId " + postId));
+        }).orElseThrow(() -> new CustomException("Comment not found with id " + commentId + " and postId " + postId, HttpStatus.NOT_FOUND));
     }
 
 }

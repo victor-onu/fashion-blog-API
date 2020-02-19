@@ -23,18 +23,18 @@ public class CommentController {
     String noDebugMessage = "No Error to debug";
 
     @GetMapping("/posts/{postId}/comments")
-    public ResponseEntity<ApiError< Page<Comment>>> getAllCommentsByPostId(@PathVariable(value = "postId") Long postId, Pageable pageable) {
-        Page<Comment> comments = commentService.findCommentsByPostId(postId, pageable);
-        ApiError apiError = new ApiError(HttpStatus.OK);
-        apiError.setMessage("Comments retrieved successfully");
-        return new ResponseEntity<>(apiError, HttpStatus.OK);
+    public Page<Comment> getAllCommentsByPostId(@PathVariable(value = "postId") Long postId, Pageable pageable) {
+        return commentService.findCommentsByPostId(postId, pageable);
+//        ApiError apiError = new ApiError(HttpStatus.OK);
+//        apiError.setMessage("Comments retrieved successfully");
+//        return new ResponseEntity<>(apiError, HttpStatus.OK);
     }
 
     @PostMapping("/posts/{postId}/comments")
     public ResponseEntity<ApiError <Comment>> createComment(@PathVariable (value = "postId") Long postId, @Valid @RequestBody Comment comment) {
       Comment newComment = commentService.createAComment(postId, comment);
-        ApiError apiError = new ApiError(HttpStatus.OK);
-        apiError.setMessage("Comments retrieved successfully");
+        ApiError<Comment> apiError = new ApiError(HttpStatus.OK);
+        apiError.setMessage("Comments created successfully");
         return new ResponseEntity<>(apiError, HttpStatus.OK);
     }
 
@@ -43,7 +43,7 @@ public class CommentController {
                                  @PathVariable (value = "commentId") Long commentId,
                                  @Valid @RequestBody Comment commentRequest) {
        Comment commentToUpdate = commentService.updateComment(postId, commentId, commentRequest);
-        ApiError apiError = new ApiError(HttpStatus.OK);
+        ApiError<Comment> apiError = new ApiError(HttpStatus.OK);
         apiError.setMessage("Comment updated successfully");
         return new ResponseEntity<>(apiError, HttpStatus.OK);
     }
@@ -52,7 +52,7 @@ public class CommentController {
     public ResponseEntity<?> deleteComment(@PathVariable (value = "postId") Long postId,
                                            @PathVariable (value = "commentId") Long commentId) {
         commentService.deleteAComment(postId, commentId);
-        ApiError apiError = new ApiError(HttpStatus.OK);
+        ApiError<Comment> apiError = new ApiError(HttpStatus.OK);
         apiError.setMessage("Comment deleted successfully");
         return new ResponseEntity<>(apiError, HttpStatus.OK);
     }

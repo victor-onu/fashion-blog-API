@@ -7,6 +7,8 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.Optional;
+
 @Service
 @Transactional
 public interface PostService {
@@ -21,4 +23,5 @@ public interface PostService {
     ResponseEntity<Object> delete(Long postId);
 
 
+    Post getOnePost(Long postId);
 }

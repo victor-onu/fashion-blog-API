@@ -11,6 +11,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
+import java.util.Optional;
 
 @RestController
 public class PostController {
@@ -26,10 +27,15 @@ public class PostController {
         return postService.findAll(pageable);
     }
 
+    @GetMapping("/posts/{postId}")
+    public Post getPost(@PathVariable Long postId) {
+        return postService.getOnePost(postId);
+    }
+
     @PostMapping("/posts")
     public ResponseEntity<ApiError<Post>> createPost(@Valid @RequestBody Post post) {
         Post newPost = postService.save(post);
-        ApiError apiError = new ApiError(HttpStatus.CREATED);
+        ApiError<Post> apiError = new ApiError<>(HttpStatus.CREATED);
         apiError.setMessage("Post Successfully created");
         return new ResponseEntity<>(apiError, HttpStatus.CREATED);
     }
@@ -37,7 +43,7 @@ public class PostController {
     @PutMapping("/posts/{postId}")
     public ResponseEntity<ApiError <Post>> updatePost(@PathVariable Long postId, @Valid @RequestBody Post postRequest) {
        Post postToUpdate = postService.updatePost(postId, postRequest);
-        ApiError apiError = new ApiError(HttpStatus.OK);
+        ApiError<Post> apiError = new ApiError<>(HttpStatus.OK);
         apiError.setMessage("Post Successfully updated");
         return new ResponseEntity<>(apiError, HttpStatus.OK);
     }
@@ -45,8 +51,8 @@ public class PostController {
 
     @DeleteMapping("/posts/{postId}")
     public ResponseEntity<?> deletePost(@PathVariable Long postId) {
-        Long deletedId = postService.delete(postId);
-        ApiError apiError = new ApiError(HttpStatus.OK);
+        postService.delete(postId);
+        ApiError<Post> apiError = new ApiError<>(HttpStatus.OK);
         apiError.setMessage("Post Successfully deleted");
         return new ResponseEntity<>(apiError, HttpStatus.OK);
     }
